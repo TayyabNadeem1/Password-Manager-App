@@ -7,15 +7,16 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardBackgroundColor="#E4DDDD"
+            app:cardBackgroundColor="#A3ADE1"
             app:cardElevation="10dp"
             android:layout_margin="5dp"
-            app:cardCornerRadius="25dp">
+            app:cardCornerRadius="25dp" >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
+
                 >
                 <ImageView
                     android:layout_width="40dp"
@@ -47,8 +48,22 @@
                         android:id="@+id/tvPassword"
                         />
 
-                </LinearLayout>
 
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="URL"
+                        android:id="@+id/tvURL"
+                        />
+                </LinearLayout>
                 <ImageView
                     android:id="@+id/ivEdit"
                     android:layout_width="40dp"

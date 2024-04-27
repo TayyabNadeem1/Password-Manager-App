@@ -25,6 +25,7 @@ public class SignUp extends AppCompatActivity {
         btnSignUp = findViewById(R.id.btnSignUp);
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
+
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

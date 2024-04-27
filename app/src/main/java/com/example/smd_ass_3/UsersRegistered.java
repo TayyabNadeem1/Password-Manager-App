@@ -5,6 +5,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
@@ -24,10 +25,10 @@ public class UsersRegistered extends AppCompatActivity {
     RecyclerView rvUsers;
     LinearLayoutManager manager;
     UserAdapter adapter;
-    FloatingActionButton fabDelete;
+    FloatingActionButton fabDelete, fabAdd;
     ArrayList<User> user;
-
     ImageView ivEdit;
+    Button etName,etPassword;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,21 +45,30 @@ public class UsersRegistered extends AppCompatActivity {
         manager = new LinearLayoutManager(this);
         rvUsers.setLayoutManager(manager);
         fabDelete =findViewById(R.id.fabDelete);
+        fabAdd =findViewById(R.id.fabAdd);
+
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UsersRegistered.this, DeletedEntries.class));
             }
         });
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UsersRegistered.this, AddNamePass.class));
+            }
+        });
 
 
-        DatabaseHelper database = new DatabaseHelper(this);
-        database.open();
-        user = database.readAllContacts();
-        database.close();
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        databaseHelper.open();
+        user = databaseHelper.readAllUrls();
+        databaseHelper.close();
 
         adapter = new UserAdapter(this, user);
         rvUsers.setAdapter(adapter);
+
     }
 
 }

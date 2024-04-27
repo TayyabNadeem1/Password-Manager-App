@@ -1,38 +1,41 @@
 package com.example.smd_ass_3;
 
+        import static androidx.core.content.ContextCompat.startActivity;
 
-import static androidx.core.content.ContextCompat.startActivity;
+        import android.app.AlertDialog;
+        import android.content.Context;
+        import android.content.DialogInterface;
+        import android.content.Intent;
+        import android.view.LayoutInflater;
+        import android.view.View;
+        import android.view.ViewGroup;
+        import android.widget.Button;
+        import android.widget.EditText;
+        import android.widget.ImageView;
+        import android.widget.TextView;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+        import androidx.annotation.NonNull;
+        import androidx.recyclerview.widget.RecyclerView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+        import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
+        import java.util.ArrayList;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private ArrayList<User> users;
-
     public static ArrayList<User> deletedUsers; // List to store deleted users
     private Context context;
+    private DatabaseHelper database; // Add database reference
+    ImageView ivDelete, ivEdit, ivUrl;
 
-    ImageView ivDelete, ivEdit;
-
+    // Constructor
     public UserAdapter(Context context, ArrayList<User> users) {
         this.context = context;
         this.users = users;
         this.deletedUsers = new ArrayList<>(); // Initialize the list
+        this.database = new DatabaseHelper(context); // Initialize database
+        this.database.open(); // Open the database
     }
 
     @NonNull
@@ -43,14 +46,67 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = users.get(position);
         holder.tvName.setText(user.getName());
-        holder.tvEmail.setText(user.getPassword());
+        holder.tvPassword.setText(user.getPassword());
+        holder.tvUrl.setText(user.getUrl());
 
         ivDelete = holder.itemView.findViewById(R.id.ivDelete);
+        ivEdit = holder.itemView.findViewById(R.id.ivEdit);
+
+
+        ivEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog editDialog = new AlertDialog.Builder(context).create();
+                View view = LayoutInflater.from(context).inflate(R.layout.activity_add_name_pass, null, false);
+                editDialog.setView(view);
+
+                EditText etName = view.findViewById(R.id.etName);
+                EditText etPassword = view.findViewById(R.id.etPassword);
+                EditText etUrl = view.findViewById(R.id.etUrl);
+                Button btnUpdate = view.findViewById(R.id.btnAdd);
+                Button btnCancel = view.findViewById(R.id.btnCancel);
+
+                etName.setText(users.get(holder.getAdapterPosition()).getName());
+                etPassword.setText(users.get(holder.getAdapterPosition()).getPassword());
+                etUrl.setText(users.get(holder.getAdapterPosition()).getUrl());
+
+                editDialog.show();
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editDialog.dismiss();
+                    }
+                });
+
+                btnUpdate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = etName.getText().toString().trim();
+                        String password = etPassword.getText().toString();
+                        String url = etUrl.getText().toString();
+                        DatabaseHelper myDatabaseHelper = new DatabaseHelper(context);
+                        myDatabaseHelper.open();
+                        myDatabaseHelper.updateUrl(users.get(holder.getAdapterPosition()).getId(),
+                                name, password, url);
+                        myDatabaseHelper.close();
+
+                        editDialog.dismiss();
+
+                        users.get(holder.getAdapterPosition()).setName(name);
+                        users.get(holder.getAdapterPosition()).setPassword(password);
+                        users.get(holder.getAdapterPosition()).setUrl(url);
+                        notifyDataSetChanged();
+
+                    }
+                });
+            }
+        });
+
         ivDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +123,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                         // Delete the user from the database and the list
                         DatabaseHelper database = new DatabaseHelper(context);
                         database.open();
-                        database.deleteContact(deletedUser.getId());
+                        database.deleteUrl(deletedUser.getId());
                         database.close();
 
                         users.remove(holder.getAdapterPosition());
@@ -84,16 +140,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 deleteDialog.show();
             }
         });
-
-
     }
 
     // Method to get the list of deleted users
     public ArrayList<User> getDeletedUsers() {
         return deletedUsers;
     }
-
-
 
     @Override
     public int getItemCount() {
@@ -102,12 +154,21 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName;
-        TextView tvEmail;
+        TextView tvPassword;
+        TextView tvUrl;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
-            tvEmail = itemView.findViewById(R.id.tvPassword);
+            tvPassword = itemView.findViewById(R.id.tvPassword);
+            tvUrl = itemView.findViewById(R.id.tvURL);
+        }
+    }
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        if (database != null) {
+            database.close(); // Close the database when the adapter is destroyed
         }
     }
 }
