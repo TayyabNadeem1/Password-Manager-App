@@ -37,21 +37,5 @@ public class PasswordManager extends AppCompatActivity {
                 finish();
             }
         });
-        btnDrop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Initialize DatabaseHelper
-                DatabaseHelper database = new DatabaseHelper(context);
-                database.open();
-
-                // Drop the table
-
-
-                // Close database
-                database.close();
-
-                finish();
-            }
-        });
     }
 }
