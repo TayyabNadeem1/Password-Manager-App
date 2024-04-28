@@ -17,6 +17,7 @@ public class PasswordManager extends AppCompatActivity {
 
     Button btnSignUp, btnLogin, btnPM, btnDrop;
     Context context;
+    int userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,11 +25,14 @@ public class PasswordManager extends AppCompatActivity {
         setContentView(R.layout.activity_password_manager);
         btnPM = findViewById(R.id.btnPM);
         btnDrop = findViewById(R.id.btnDrop);
+        Intent intent=getIntent();
+        userid=intent.getIntExtra("userid",-1);
 
         btnPM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PasswordManager.this, UsersRegistered.class);
+                intent.putExtra("userid",userid);
                 startActivity(intent);
                 finish();
             }

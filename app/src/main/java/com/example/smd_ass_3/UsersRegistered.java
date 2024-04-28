@@ -29,12 +29,15 @@ public class UsersRegistered extends AppCompatActivity {
     ArrayList<User> user;
     ImageView ivEdit;
     Button etName,etPassword;
+    int userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_users_registered);
         init();
+        Intent intent=getIntent();
+        userid=intent.getIntExtra("userid",-1);
 
     }
     private void init()
@@ -47,6 +50,8 @@ public class UsersRegistered extends AppCompatActivity {
         fabDelete =findViewById(R.id.fabDelete);
         fabAdd =findViewById(R.id.fabAdd);
 
+        Intent intent=getIntent();
+        userid=intent.getIntExtra("userid",-1);
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,14 +61,16 @@ public class UsersRegistered extends AppCompatActivity {
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(UsersRegistered.this, AddNamePass.class));
+                Intent intent = new Intent(UsersRegistered.this, AddNamePass.class);
+                intent.putExtra("userid", userid);
+                startActivity(intent);
+                finish();
             }
         });
 
-
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         databaseHelper.open();
-        user = databaseHelper.readAllUrls();
+        user = databaseHelper.readAllUrls(userid);
         databaseHelper.close();
 
         adapter = new UserAdapter(this, user);

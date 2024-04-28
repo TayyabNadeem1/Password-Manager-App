@@ -16,6 +16,7 @@ public class SignUp extends AppCompatActivity {
 
     Button btnLogin, btnSignUp;
     EditText etName, etPassword;
+    int userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,12 +26,14 @@ public class SignUp extends AppCompatActivity {
         btnSignUp = findViewById(R.id.btnSignUp);
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
-
+        Intent intent=getIntent();
+        userid=intent.getIntExtra("userid",-1);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addUser();
-                Intent intent = new Intent(SignUp.this, PasswordManager.class);
+                Intent intent = new Intent(SignUp.this, MainActivity.class);
+                intent.putExtra("userid",userid);
                 startActivity(intent);
                 finish();
             }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class DatabaseHelper {
 
     private final String DATABASE_NAME = "PasswordDB";
-    private final int DATABASE_VERSION = 3;
+    private final int DATABASE_VERSION = 6;
 
     private final String TABLE_NAME = "UserDetails";
     private final String KEY_ID = "_id";
@@ -25,25 +25,33 @@ public class DatabaseHelper {
     // New table details
     private final String URL_TABLE_NAME = "UrlDetails";
     private final String URL_KEY_ID = "_id";
+    private final String URL_KEY_ID_FOR = "_userid";
     private final String URL_KEY_NAME = "_name";
     private final String URL_KEY_PASSWORD = "_password";
     private final String URL_KEY_URL = "_url";
+
 
     String query = "CREATE TABLE " + TABLE_NAME + "(" +
             KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             KEY_NAME + " TEXT NOT NULL," +
             KEY_PASSWORD + " TEXT NOT NULL" +
             ");";
+
     // Query to create the UrlDetails table
-    String urlTableQuery = "CREATE TABLE " + URL_TABLE_NAME + "(" +
-            URL_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-            URL_KEY_NAME + " TEXT NOT NULL," +
-            URL_KEY_PASSWORD + " TEXT NOT NULL," +
-            URL_KEY_URL + " TEXT NOT NULL" +
+    String urlTableQuery = "CREATE TABLE " + URL_TABLE_NAME + " (" +
+            URL_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            URL_KEY_ID_FOR  + " INTEGER NOT NULL," + // Added space before "INTEGER NOT NULL"
+            URL_KEY_NAME + " TEXT NOT NULL, " +
+            URL_KEY_PASSWORD + " TEXT NOT NULL, " +
+            URL_KEY_URL + " TEXT NOT NULL, " +
+            "FOREIGN KEY(" + URL_KEY_ID_FOR + ") REFERENCES " + TABLE_NAME + "(" + KEY_ID + ")" +
             ");";
+
+
     CreateDataBase helper;
     SQLiteDatabase database;
     Context context;
+    private int loggedInUserId = -1; // Initialize to -1 indicating no user is logged in
 
     public DatabaseHelper(Context context) {
         this.context = context;
@@ -114,11 +122,12 @@ public class DatabaseHelper {
         }
     }
 
-    public void insertUrl(String name, String password, String url) {
+    public void insertUrl(int userId, String name, String password, String url) {
         ContentValues cv = new ContentValues();
         cv.put(URL_KEY_NAME, name);
         cv.put(URL_KEY_PASSWORD, password);
         cv.put(URL_KEY_URL, url);
+        cv.put(URL_KEY_ID_FOR, userId); // Add the foreign key (user ID)
 
         long records = database.insert(URL_TABLE_NAME, null, cv);
         if (records == -1) {
@@ -130,6 +139,53 @@ public class DatabaseHelper {
         Log.d("DatabaseHelper", "insertUrl() called with name: " + name + ", password: " + password + ", url: " + url);
     }
 
+    public boolean isValidCredentials(String username, String password) {
+        CreateDataBase dbHelper = new CreateDataBase(context, DATABASE_NAME, null, DATABASE_VERSION);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[]{KEY_ID},
+                KEY_NAME + "=? AND " + KEY_PASSWORD + "=?",
+                new String[]{username, password},
+                null, null, null);
+        boolean isValid = cursor.moveToFirst();
+        if (isValid) {
+            int columnIndex = cursor.getColumnIndex(KEY_ID);
+            if (columnIndex != -1) {
+                loggedInUserId = cursor.getInt(columnIndex); // Update the global variable
+
+            } else {
+                Log.e("isValidCredentials", "KEY_ID not found in cursor");
+            }
+        }
+        cursor.close();
+        db.close();
+        //return loggedInUserId;
+        return isValid;
+    }
+
+    public int getID(String username, String password) {
+        CreateDataBase dbHelper = new CreateDataBase(context, DATABASE_NAME, null, DATABASE_VERSION);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[]{KEY_ID},
+                KEY_NAME + "=? AND " + KEY_PASSWORD + "=?",
+                new String[]{username, password},
+                null, null, null);
+        boolean isValid = cursor.moveToFirst();
+        if (isValid) {
+            int columnIndex = cursor.getColumnIndex(KEY_ID);
+            if (columnIndex != -1) {
+                loggedInUserId = cursor.getInt(columnIndex); // Update the global variable
+
+            } else {
+                Log.e("isValidCredentials", "KEY_ID not found in cursor");
+            }
+        }
+        cursor.close();
+        db.close();
+        return loggedInUserId;
+        //return isValid;
+    }
 
 
     public ArrayList<User> readAllContacts() {
@@ -157,9 +213,17 @@ public class DatabaseHelper {
     }
 
     // Method to read all URL records
-    public ArrayList<User> readAllUrls() {
+    public ArrayList<User> readAllUrls(int userid) {
         ArrayList<User> records = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT * FROM " + URL_TABLE_NAME, null);
+        // Modify the SQL query to filter results based on user ID
+        String query = "SELECT * FROM " + URL_TABLE_NAME + " WHERE " + URL_KEY_ID_FOR + " = "+ userid;
+
+        // Arguments for the query
+
+
+        // Execute the query
+        Cursor cursor = database.rawQuery(query, null);
+
         int idIndex = cursor.getColumnIndex(URL_KEY_ID);
         int nameIndex = cursor.getColumnIndex(URL_KEY_NAME);
         int passwordIndex = cursor.getColumnIndex(URL_KEY_PASSWORD);
@@ -180,6 +244,9 @@ public class DatabaseHelper {
         return records;
     }
 
+
+
+
     public void open() {
         helper = new CreateDataBase(context, DATABASE_NAME, null, DATABASE_VERSION);
         database = helper.getWritableDatabase();
@@ -197,13 +264,9 @@ public class DatabaseHelper {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-
-
             // Execute the queries to create the tables
             db.execSQL(query);
             db.execSQL(urlTableQuery);
-
-
         }
 
         @Override
@@ -213,7 +276,5 @@ public class DatabaseHelper {
             db.execSQL("DROP TABLE IF EXISTS " + URL_TABLE_NAME);
             onCreate(db);
         }
-
     }
-
 }

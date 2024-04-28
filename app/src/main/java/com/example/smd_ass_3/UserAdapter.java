@@ -124,6 +124,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                         DatabaseHelper database = new DatabaseHelper(context);
                         database.open();
                         database.deleteUrl(deletedUser.getId());
+
                         database.close();
 
                         users.remove(holder.getAdapterPosition());

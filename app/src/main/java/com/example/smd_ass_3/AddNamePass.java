@@ -15,6 +15,7 @@ public class AddNamePass extends AppCompatActivity {
     EditText etName, etPassword, etUrl;
     Button btnAdd, btnCancel;
 
+    int userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,11 +26,13 @@ public class AddNamePass extends AppCompatActivity {
         etUrl = findViewById(R.id.etUrl);
         btnAdd = findViewById(R.id.btnAdd);
         btnCancel = findViewById(R.id.btnCancel);
-
+        Intent intent=getIntent();
+        userid=intent.getIntExtra("userid",-1);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addUser();
+
             }
         });
 
@@ -54,7 +57,8 @@ public class AddNamePass extends AppCompatActivity {
         DatabaseHelper myDatabaseHelper = new DatabaseHelper(this);
         try {
             myDatabaseHelper.open();
-            myDatabaseHelper.insertUrl(name, password, url);
+            myDatabaseHelper.insertUrl(userid,name, password, url);
+
             Toast.makeText(AddNamePass.this, "User added successfully", Toast.LENGTH_SHORT).show();
             finish(); // Finish the activity after adding the user
         } catch (Exception e) {
