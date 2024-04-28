@@ -60,11 +60,11 @@ public class AddNamePass extends AppCompatActivity {
             myDatabaseHelper.insertUrl(userid,name, password, url);
 
             Toast.makeText(AddNamePass.this, "User added successfully", Toast.LENGTH_SHORT).show();
-            finish(); // Finish the activity after adding the user
+            finish();
         } catch (Exception e) {
             Toast.makeText(AddNamePass.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         } finally {
-            myDatabaseHelper.close(); // Ensure database is closed regardless of exceptions
+            myDatabaseHelper.close();
         }
     }
 }

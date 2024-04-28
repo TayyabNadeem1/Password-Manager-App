@@ -52,13 +52,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     int userId = databaseHelper.getID(username, password);
                     if (userId != -1) {
-                        // Credentials are valid, navigate to PasswordManager activity
+
                         Intent intent = new Intent(MainActivity.this, PasswordManager.class);
                         intent.putExtra("userid", userId);
                         startActivity(intent);
                         finish();
                     } else {
-                        // Credentials are invalid
+
                         Toast.makeText(MainActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
                     }
                 }

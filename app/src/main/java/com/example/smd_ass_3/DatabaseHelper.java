@@ -40,7 +40,7 @@ public class DatabaseHelper {
     // Query to create the UrlDetails table
     String urlTableQuery = "CREATE TABLE " + URL_TABLE_NAME + " (" +
             URL_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            URL_KEY_ID_FOR  + " INTEGER NOT NULL," + // Added space before "INTEGER NOT NULL"
+            URL_KEY_ID_FOR  + " INTEGER NOT NULL," +
             URL_KEY_NAME + " TEXT NOT NULL, " +
             URL_KEY_PASSWORD + " TEXT NOT NULL, " +
             URL_KEY_URL + " TEXT NOT NULL, " +
@@ -51,7 +51,7 @@ public class DatabaseHelper {
     CreateDataBase helper;
     SQLiteDatabase database;
     Context context;
-    private int loggedInUserId = -1; // Initialize to -1 indicating no user is logged in
+    private int loggedInUserId = -1;
 
     public DatabaseHelper(Context context) {
         this.context = context;
@@ -175,7 +175,7 @@ public class DatabaseHelper {
         if (isValid) {
             int columnIndex = cursor.getColumnIndex(KEY_ID);
             if (columnIndex != -1) {
-                loggedInUserId = cursor.getInt(columnIndex); // Update the global variable
+                loggedInUserId = cursor.getInt(columnIndex);
 
             } else {
                 Log.e("isValidCredentials", "KEY_ID not found in cursor");
