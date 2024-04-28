@@ -33,12 +33,20 @@ public class AddNamePass extends AppCompatActivity {
             public void onClick(View v) {
                 addUser();
 
+                // Create an intent to start the UsersRegistered activity
+                Intent intent = new Intent(AddNamePass.this, UsersRegistered.class);
+                intent.putExtra("userid", userid); // Pass the user ID to the UsersRegistered activity
+                startActivity(intent); // Start the activity
+
+                finish(); // Finish the current activity (AddNamePass)
             }
         });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(AddNamePass.this, PasswordManager.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -60,11 +68,12 @@ public class AddNamePass extends AppCompatActivity {
             myDatabaseHelper.insertUrl(userid,name, password, url);
 
             Toast.makeText(AddNamePass.this, "User added successfully", Toast.LENGTH_SHORT).show();
-            finish();
+            finish(); // Finish the activity after adding the user
         } catch (Exception e) {
             Toast.makeText(AddNamePass.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         } finally {
-            myDatabaseHelper.close();
+            myDatabaseHelper.close(); // Ensure database is closed regardless of exceptions
         }
     }
+
 }

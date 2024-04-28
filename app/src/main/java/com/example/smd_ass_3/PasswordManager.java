@@ -24,7 +24,7 @@ public class PasswordManager extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_password_manager);
         btnPM = findViewById(R.id.btnPM);
-        btnDrop = findViewById(R.id.btnDrop);
+
         Intent intent=getIntent();
         userid=intent.getIntExtra("userid",-1);
 
