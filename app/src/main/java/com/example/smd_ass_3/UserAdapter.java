@@ -134,7 +134,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 deleteDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Cancel the deletion
+
                     }
                 });
 
@@ -143,7 +143,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         });
     }
 
-    // Method to get the list of deleted users
+
     public ArrayList<User> getDeletedUsers() {
         return deletedUsers;
     }
@@ -169,7 +169,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         if (database != null) {
-            database.close(); // Close the database when the adapter is destroyed
+            database.close();
         }
     }
 }

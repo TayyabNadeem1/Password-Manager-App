@@ -38,14 +38,7 @@ public class SignUp extends AppCompatActivity {
                 finish();
             }
         });
-//        btnLogin.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(SignUp.this,MainActivity.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
+
 
 
     }
