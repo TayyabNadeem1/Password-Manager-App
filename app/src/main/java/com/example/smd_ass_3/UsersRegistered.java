@@ -27,8 +27,7 @@ public class UsersRegistered extends AppCompatActivity {
     UserAdapter adapter;
     FloatingActionButton fabDelete, fabAdd;
     ArrayList<User> user;
-    ImageView ivEdit;
-    Button etName,etPassword;
+
     int userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +43,7 @@ public class UsersRegistered extends AppCompatActivity {
     {
 
         rvUsers = findViewById(R.id.rvUsers);
-        rvUsers.setHasFixedSize(true);
-        manager = new LinearLayoutManager(this);
-        rvUsers.setLayoutManager(manager);
+
         fabDelete =findViewById(R.id.fabDelete);
         fabAdd =findViewById(R.id.fabAdd);
 
